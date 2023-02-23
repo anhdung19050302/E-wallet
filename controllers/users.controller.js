@@ -30,7 +30,7 @@ const getRegister = (req, res) => {
     res.render('register', { phoneNumber: '', email: '', fullName: '', dateOfbirth: '', address: '', message: '' })
 }
 
-const postRegister = async(req, res) => {
+const postRegister = async (req, res) => {
     let result = validationResult(req)
     let { phoneNumber, email, fullName, dateOfbirth, address } = req.body
 
@@ -85,13 +85,13 @@ const postRegister = async(req, res) => {
                     // };
 
                     return res.render('register', { account: { username, password, phoneNumber } })
-                        // transporter.sendMail(messageOptions, (error, info) => {
-                        //     if (error) {
-                        //         console.log(error)
-                        //     }
-                        //     res.render('register', { account: { username, password } })
-                        //     return res.redirect(`/users/createwallet/${phoneNumber}`)
-                        // });
+                    // transporter.sendMail(messageOptions, (error, info) => {
+                    //     if (error) {
+                    //         console.log(error)
+                    //     }
+                    //     res.render('register', { account: { username, password } })
+                    //     return res.redirect(`/users/createwallet/${phoneNumber}`)
+                    // });
                 })
 
             })
@@ -122,7 +122,7 @@ const getLogin = (req, res) => {
     res.render('login', { username: '', password: '', message: '' })
 }
 
-const postLogin = async(req, res) => {
+const postLogin = async (req, res) => {
     let result = validationResult(req)
     let { username, password } = req.body
     if (result.errors.length === 0) {
@@ -162,8 +162,8 @@ const postLogin = async(req, res) => {
                                 if (account.countLogin < 2) {
 
                                     dataUser.findByIdAndUpdate(account._id, { countLogin: account.countLogin + 1, loginFailAt: Date.now() }, {
-                                            new: true
-                                        })
+                                        new: true
+                                    })
                                         .then(acc => {
                                             return res.render('login', { message: 'Sai thông tin đăng nhập' })
                                         })
@@ -186,9 +186,9 @@ const postLogin = async(req, res) => {
                         }
                     })
 
-                .catch(e => {
-                    console.log(e)
-                })
+                    .catch(e => {
+                        return res.render('login', { message: 'Sai thông tin đăng nhập' })
+                    })
             })
     } else {
         let messages = result.mapped()
@@ -203,7 +203,8 @@ const postLogin = async(req, res) => {
 }
 
 
-const getHomePage = async(req, res) => {
+
+const getHomePage = async (req, res) => {
     if (req.session.account) {
         return res.redirect('/users/homepage')
     }
@@ -217,10 +218,10 @@ const getHomePageLogin = (req, res) => {
     res.render('home-page-login', { account: account })
 }
 const getLogout = (req, res) => {
-        req.session = null
-        res.redirect('/')
-    }
-    //API FIRST CHANGE PASSWORD
+    req.session = null
+    res.redirect('/')
+}
+//API FIRST CHANGE PASSWORD
 const getFirstChangePass = (req, res) => {
 
     res.render('change-password-first', { message: '' })
@@ -234,8 +235,8 @@ const postFirstChangePass = (req, res) => {
         return res.render('change-password-first', { message: 'Mật khẩu chưa hợp lệ' })
     } else {
         dataUser.findByIdAndUpdate(id, { password: password, check: 1 }, {
-                new: true
-            })
+            new: true
+        })
             .then((account) => {
                 req.session.account = account
                 if (account) {
@@ -250,7 +251,7 @@ const postFirstChangePass = (req, res) => {
 }
 
 //API GET PROFILE
-const getProfile = async(req, res) => {
+const getProfile = async (req, res) => {
     res.locals.account = req.session.account
     let acc = req.session.account
     if (!acc) {
@@ -286,7 +287,7 @@ const postChangePass = (req, res) => {
 
 }
 
-const getCreatWallet = async(req, res) => {
+const getCreatWallet = async (req, res) => {
     let id = req.params.id
     if (!id) {
         return res.redirect('/users/login')
@@ -305,18 +306,18 @@ const getCreatWallet = async(req, res) => {
 }
 
 //changeCMND
-const postProfile = async(req, res) => {
+const postProfile = async (req, res) => {
     const imageFront = req.files.imageFront
     const imageBack = req.files.imageBack
     let acc = req.session.account
     let idWallet = acc._id
 
     let userWallet = await wallet.findOne({ userId: Object(idWallet) })
-        // console.log(req.files)
+    // console.log(req.files)
     let id = req.session.account._id
     dataUser.findByIdAndUpdate(id, { checkIDCard: 0, imageBack: imageBack[0].filename, imageFront: imageFront[0].filename }, {
-            new: true
-        })
+        new: true
+    })
         .then(account => {
             req.session.account = account
             if (account) {
@@ -350,7 +351,7 @@ const getForgetPassword = (req, res) => {
                 otp: otp
             })
             otps.save()
-            messagebird.messages.create(params, function(err, response) {
+            messagebird.messages.create(params, function (err, response) {
                 if (err) {
                     return console.log(err);
                 }
@@ -388,8 +389,8 @@ const postchangenewpass = (req, res) => {
         return res.render('change-password-first', { message: 'Mật khẩu chưa hợp lệ' })
     } else {
         dataUser.findOneAndUpdate({ phoneNumber: phone }, { password: password }, {
-                new: true
-            })
+            new: true
+        })
             .then((account) => {
                 if (account) {
                     return res.redirect('/users/login')
@@ -399,9 +400,9 @@ const postchangenewpass = (req, res) => {
 }
 
 const getOTP = (req, res) => {
-        res.render('forget-password', { message: '' })
-    }
-    //END API FORGET PASSWORD
+    res.render('forget-password', { message: '' })
+}
+//END API FORGET PASSWORD
 
 module.exports = {
     getProfile,
